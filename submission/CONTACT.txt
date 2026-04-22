@@ -1,0 +1,8 @@
+Name: Jachin Bakhtsingh
+Email: jachinbakhtsingh703@gmail.com
+Phone: 9810009659
+GitHub: https://github.com/jachinbakhtsingh/
+
+
+Most challenging part:
+Connecting frontend with backend APIs and handling authentication flow was the most challenging part.

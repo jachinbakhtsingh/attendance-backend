@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance App</title>
+</head>
+<body>
+
+<h2>Signup</h2>
+<input id="name" placeholder="Name"><br>
+<input id="email" placeholder="Email"><br>
+<input id="password" placeholder="Password"><br>
+<select id="role">
+  <option>Student</option>
+  <option>Trainer</option>
+</select><br>
+<button onclick="signup()">Signup</button>
+
+<hr>
+
+<h2>Login</h2>
+<input id="loginEmail" placeholder="Email"><br>
+<input id="loginPassword" placeholder="Password"><br>
+<button onclick="login()">Login</button>
+
+<p id="token"></p>
+
+<hr>
+
+<h2>Create Session (Trainer)</h2>
+<input id="title" placeholder="Session Title"><br>
+<input id="batch" placeholder="Batch ID"><br>
+<button onclick="createSession()">Create Session</button>
+
+<hr>
+
+<h2>Mark Attendance (Student)</h2>
+<input id="sessionId" placeholder="Session ID"><br>
+<select id="status">
+  <option>present</option>
+  <option>absent</option>
+</select><br>
+<button onclick="markAttendance()">Mark Attendance</button>
+
+<hr>
+
+<h2>View Attendance (Trainer)</h2>
+<input id="viewSessionId" placeholder="Session ID"><br>
+<button onclick="viewAttendance()">View</button>
+
+<pre id="output"></pre>
+
+<script>
+const BASE_URL = "https://attendance-backend-f2in.onrender.com";
+let token = "";
+
+// Signup
+async function signup() {
+  const res = await fetch(BASE_URL + "/signup", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      name: document.getElementById("name").value,
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value,
+      role: document.getElementById("role").value
+    })
+  });
+  alert(await res.text());
+}
+
+// Login
+async function login() {
+  const res = await fetch(BASE_URL + "/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      email: document.getElementById("loginEmail").value,
+      password: document.getElementById("loginPassword").value
+    })
+  });
+
+  const data = await res.json();
+  token = data.token;
+  document.getElementById("token").innerText = "Token: " + token;
+}
+
+// Create Session
+async function createSession() {
+  const res = await fetch(BASE_URL + "/sessions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token
+    },
+    body: JSON.stringify({
+      title: document.getElementById("title").value,
+      batch_id: document.getElementById("batch").value
+    })
+  });
+  alert(await res.text());
+}
+
+// Mark Attendance
+async function markAttendance() {
+  const res = await fetch(BASE_URL + "/attendance", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token
+    },
+    body: JSON.stringify({
+      session_id: document.getElementById("sessionId").value,
+      status: document.getElementById("status").value
+    })
+  });
+  alert(await res.text());
+}
+
+// View Attendance
+async function viewAttendance() {
+  const id = document.getElementById("viewSessionId").value;
+
+  const res = await fetch(BASE_URL + "/attendance/" + id, {
+    headers: {
+      "Authorization": token
+    }
+  });
+
+  const data = await res.json();
+  document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+}
+</script>
+
+</body>
+</html>
